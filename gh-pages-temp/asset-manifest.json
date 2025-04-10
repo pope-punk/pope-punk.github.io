@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/hexagonal-church-app/static/css/main.e48e567f.css",
+    "main.js": "/hexagonal-church-app/static/js/main.e4cd0ca4.js",
+    "static/js/453.5179ff21.chunk.js": "/hexagonal-church-app/static/js/453.5179ff21.chunk.js",
+    "index.html": "/hexagonal-church-app/index.html",
+    "main.e48e567f.css.map": "/hexagonal-church-app/static/css/main.e48e567f.css.map",
+    "main.e4cd0ca4.js.map": "/hexagonal-church-app/static/js/main.e4cd0ca4.js.map",
+    "453.5179ff21.chunk.js.map": "/hexagonal-church-app/static/js/453.5179ff21.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e48e567f.css",
+    "static/js/main.e4cd0ca4.js"
+  ]
+}

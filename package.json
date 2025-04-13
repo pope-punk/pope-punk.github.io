@@ -2,7 +2,7 @@
   "name": "hexagonal-animated-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://pope-punk.github.io/hexagonal-animated-app",
+  "homepage": "https://pope-punk.github.io/",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

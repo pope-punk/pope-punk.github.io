@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/static/css/main.4a24d32a.css",
+    "main.js": "/static/js/main.5b5f16fb.js",
+    "static/media/app-background.png": "/static/media/app-background.27c9301089bc4681f9a5.png",
+    "static/media/church-background.png": "/static/media/church-background.8ebc9c6d091a79aa2986.png",
+    "static/media/keypad-background.png": "/static/media/keypad-background.c65eaaeb1d25776189ea.png",
+    "static/media/pew-icon.png": "/static/media/pew-icon.62bd7952f90931666499.png",
+    "static/media/unpressed-button.png": "/static/media/unpressed-button.86ed88979ea75ce6c9f1.png",
+    "static/media/pressed-button.png": "/static/media/pressed-button.48714974bfc230ad1abb.png",
+    "index.html": "/index.html",
+    "main.4a24d32a.css.map": "/static/css/main.4a24d32a.css.map",
+    "main.5b5f16fb.js.map": "/static/js/main.5b5f16fb.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4a24d32a.css",
+    "static/js/main.5b5f16fb.js"
+  ]
+}

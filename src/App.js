@@ -3,7 +3,6 @@ import HexagonalChurch from "./components/HexagonalChurch";
 import MatrixInput from "./components/MatrixInput";
 import { CANONICAL_STATE, isValidMatrix, calculateTransition, generateDefaultMatrix } from "./utils/matrixUtils";
 
-
 // Import custom assets
 import buttonIcon from "./assets/pew-icon.png";
 import keypadBackground from "./assets/keypad-background.png";
@@ -12,13 +11,15 @@ import unpressedButton from "./assets/unpressed-button.png";
 import hexagonBackground from "./assets/church-background.png";
 import appBackground from "./assets/app-background.png";
 
+// Import CSS
+import './index.css';
+
 function App() {
   // State for matrix input
   const [currentMatrix, setCurrentMatrix] = useState(generateDefaultMatrix());
   const [previousMatrix, setPreviousMatrix] = useState(null);
-
-  // State for animation
   const [transformationSteps, setTransformationSteps] = useState([]);
+  const canvasRef = useRef(null);
 
   // Custom images setup
   const customImages = {
@@ -30,21 +31,19 @@ function App() {
     appBackground,
   };
 
-  // Ref for the canvas
-  const canvasRef = useRef(null);
-
   // Effect to set the app background
   useEffect(() => {
     if (appBackground) {
       document.body.style.backgroundImage = `url(${appBackground})`;
       document.body.style.backgroundSize = "cover";
       document.body.style.backgroundPosition = "center";
+      document.body.style.backgroundAttachment = "fixed";
     }
 
     return () => {
       document.body.style.backgroundImage = "none";
     };
-  }, []);
+  }, [appBackground]);
 
   // Handle matrix input submission
   const handleMatrixSubmit = (matrix) => {
@@ -67,19 +66,19 @@ function App() {
   return (
     <div className="app">
       <div className="main-container">
+        <div className="input-container">
+          <MatrixInput
+            initialMatrix={currentMatrix}
+            onSubmit={handleMatrixSubmit}
+            customImages={customImages}
+          />
+        </div>
+
         <div className="church-container">
           <HexagonalChurch
             ref={canvasRef}
             matrix={currentMatrix}
             animationSteps={transformationSteps}
-            customImages={customImages}
-          />
-        </div>
-
-        <div className="input-container">
-          <MatrixInput
-            initialMatrix={currentMatrix}
-            onSubmit={handleMatrixSubmit}
             customImages={customImages}
           />
         </div>

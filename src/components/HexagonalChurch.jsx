@@ -12,7 +12,7 @@ const GUIDE_LINE_WIDTH = 1;
 const PEW_DISPLAY_WIDTH = 100;
 const PEW_DISPLAY_HEIGHT = 100;
 // Animation timing
-const ANIMATION_DURATION = 1000; // ms
+const ANIMATION_DURATION = 2500; // ms
 
 // --- Helper Functions ---
 
@@ -284,31 +284,31 @@ const HexagonalChurch = forwardRef(({ matrix, animationSteps, customImages }, re
     }, [animationActive, currentStepIndex, animationProgress, animationSteps, matrix]);
 
     // Drawing function
-    const drawCanvas = useCallback(() => {
-        const canvas = ref?.current;
-        if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-        
-        const { width, height } = canvas;
-        const centerX = width / 2;
-        const centerY = height / 2;
-        const hexSize = Math.min(width, height) * 0.45;
+const drawCanvas = useCallback(() => {
+    const canvas = ref?.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    const { width, height } = canvas;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const hexSize = Math.min(width, height) * 0.45;
 
-        ctx.clearRect(0, 0, width, height);
-
-        // Draw everything
-        const hexPoints = drawHexagonalOutline(ctx, width, height, hexSize, centerX, centerY);
-        drawBackground(ctx, width, height, bgImg, hexPoints);
-        drawHexagonalOutline(ctx, width, height, hexSize, centerX, centerY); // Outline on top
-        const ringRadii = drawGuides(ctx, width, height, hexSize, centerX, centerY);
-        
-        // Draw pews with current matrix or animation interpolation
-        const matrixToRender = animationActive ? interpolatedMatrix : matrix;
-        drawPews(ctx, matrixToRender, pewImg, width, height, hexSize, centerX, centerY, ringRadii);
-
-    }, [ref, matrix, bgImg, pewImg, animationActive, interpolatedMatrix]);
+    // Clear with transparent background instead of black
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw everything
+    const hexPoints = drawHexagonalOutline(ctx, width, height, hexSize, centerX, centerY);
+    drawBackground(ctx, width, height, bgImg, hexPoints);
+    drawHexagonalOutline(ctx, width, height, hexSize, centerX, centerY); // Outline on top
+    const ringRadii = drawGuides(ctx, width, height, hexSize, centerX, centerY);
+    
+    // Draw pews with current matrix or animation interpolation
+    const matrixToRender = animationActive ? interpolatedMatrix : matrix;
+    drawPews(ctx, matrixToRender, pewImg, width, height, hexSize, centerX, centerY, ringRadii);
+}, [ref, matrix, bgImg, pewImg, animationActive, interpolatedMatrix]);
 
     // Effect to trigger drawing
     useEffect(() => {

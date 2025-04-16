@@ -1,215 +1,267 @@
-/* Base styles */
+/* src/index.css - Refactored Layout */
+
+/* 1. Base Body Styles */
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #1a1a1a;
+  background-color: #1a1a1a; /* Fallback color */
   color: #f0f0f0;
-  transition: background-image 0.5s ease;
+  background-image: url('./assets/app-background.png'); /* User's marble background */
+  background-size: cover; 
+  background-position: center;
+  background-attachment: fixed; 
   min-height: 100vh;
-  overflow: hidden;
+  line-height: 1.5;
+  overflow-x: hidden; /* Prevent horizontal scrollbars */
 }
 
-/* App container */
-.app {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 2. Core App Layout (Flexbox) */
+.app-layout {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* Main layout container - using Grid for better control */
-.main-container {
-  display: grid;
-  grid-template-columns: 35% 65%;
-  gap: 20px;
-  align-items: center;
-  flex: 1;
-}
-
-/* Church container - RIGHT SIDE */
-.church-container {
+  flex-direction: row; 
   width: 100%;
-  background-color: rgba(15, 15, 15, 0.8);
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  min-height: 100vh;
+  padding: 8rem; 
+  gap: 1rem; 
+  align-items: center; 
+}
+
+/* 3. Column Sizing & Structure */
+.keypad-column {
+  flex-basis: 50%; 
+  flex-shrink: 0; 
+  flex-grow: 0; 
+  max-width: 400px; /* Max width for the whole column */
+
+  /* Arrange items vertically, centered */
+  display: flex;
+  flex-direction: column; /* Stack status, keypad, button */
+  justify-content: center; 
+  align-items: center; 
+  gap: 1.5rem; /* Space between status, keypad, button */
+}
+
+.church-column {
+  flex-basis: 50%; 
+  flex-shrink: 1; 
+  flex-grow: 1; 
+
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
 }
 
-/* Input container - LEFT SIDE */
-.input-container {
-  width: 100%;
+/* 4. Keypad Component Styles */
+.matrix-input { /* Container for the grid background and buttons only */
+  background-image: url('./assets/keypad-background.png'); 
+  background-size: contain; 
+  background-repeat: no-repeat;    
+  background-position: center center; 
+  
+  border-radius: 8px;
+  width: 100%; /* Fill column width */
+  max-width: 500px; /* Max width of the keypad itself */
+  aspect-ratio: 1 / 1; 
+  box-shadow: -4px 4px 15px rgba(0, 0, 0, 0.8);
+  
+  display: flex; /* Use flex for internal grid layout */
+  flex-direction: column; /* Grid rows stack */
+  justify-content: center; /* Center grid vertically */
+  padding: 1rem; /* Padding inside */
+  box-sizing: border-box;
+  
+}
+
+.matrix-grid {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 10px;
+  gap: 0.75rem; 
+  width: 100%; /* Grid takes full width of .matrix-input */
+  padding: 5%; 
+  box-sizing: border-box;
 }
 
-/* Church visualization */
-.church-visualization {
+.matrix-row {
+  display: flex;
+  justify-content: space-around; 
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+}
+
+.matrix-cell {
+  width: 30%; 
+  aspect-ratio: 1 / 1; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; 
+  background-color: rgba(255, 255, 255, 0.05); 
+  border: 1px solid #555; 
+  border-radius: 6px; 
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  overflow: hidden; 
+  padding: 0; 
+  box-sizing: border-box;
+}
+.matrix-cell:hover {
+   background-color: rgba(255, 255, 255, 0.15);
+}
+
+.matrix-cell .button-state-icon { 
+  width: 75%; 
+  height: 75%; 
+  max-width: 100%; 
+  max-height: 100%;
+  object-fit: contain; 
+  opacity: 0.6; 
+  transition: opacity 0.2s ease, transform 0.2s ease; 
+}
+.matrix-cell.pressed .button-state-icon {
+   opacity: 1.0; 
+   transform: scale(0.9); 
+}
+/* Active state for highlighting during animation pause */
+.matrix-cell.active {
+  animation: pulse 1.5s infinite;
+}
+
+/* 5. Status Display Styles (Now outside .matrix-input) */
+.matrix-status {
+  background-color: rgba(30, 30, 30, 0.8); 
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  /* margin-top removed, use gap in .keypad-column */
+  text-align: center;
+  font-size: 0.9rem; /* Increased size slightly */
+  width: auto; 
+  min-width: 200px; /* Give it some base width */
+  max-width: 90%; 
+  align-self: center; 
+  box-sizing: border-box;
+  border: 1px solid #555; /* Optional border */
+}
+.valid-config { color: #4caf50; font-weight: bold; }
+.invalid-config { color: #f44336; }
+/* Removed .error-message as separate element, error shown in .invalid-config */
+
+/* 6. Action Button Styles (Now outside .matrix-input) */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  width: 100%; /* Button container takes width */
+  /* margin-top removed, use gap in .keypad-column */
+}
+.go-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  min-width: 200px; /* Ensure button has decent width */
+}
+.go-button.valid {
+  background-color: #4caf50;
+  color: white;
+}
+.go-button.valid:hover {
+  background-color: #3d9140;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+.go-button.invalid {
+  background-color: #f44336; /* Use error color for reset */
+  color: white;
+}
+.go-button.invalid:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+.go-button:disabled { /* Style for when animating */
+    background-color: #555;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 7. Church Component Styles */
+.church-visualization {
+  width: 100%; 
+  max-width: 750px; 
+  aspect-ratio: 1 / 1; 
   position: relative;
 }
-
 .church-canvas {
+  display: block; 
   width: 100%;
-  height: auto;
-  border: 2px solid #333;
+  height: 100%; 
+  border: 0	px solid #333; 
   border-radius: 4px;
-  background-color: transparent;
+  box-sizing: border-box;
 }
-
 .animation-status {
   position: absolute;
   bottom: 10px;
-  left: 0;
-  width: 100%;
+  left: 5%; 
+  width: 90%; 
   text-align: center;
   background-color: rgba(0, 0, 0, 0.7);
   padding: 0.5rem;
   border-radius: 4px;
+  box-sizing: border-box;
 }
-
 .step-description {
   font-size: 0.9rem;
   color: #fff;
   font-style: italic;
 }
 
-/* Matrix Input Component */
-.matrix-input {
-  background-color: transparent;
-  background-image: url('./assets/keypad-background.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  padding: 1.5rem;
-  padding-top: 2.5rem; /* Add more top padding to move content down */
-  padding-bottom: 3rem; /* Add bottom padding for status bar */
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  width: 100%;
-  max-width: 320px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* Matrix grid layout */
-.matrix-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px; /* Wider spacing between cells */
-  width: 85%;
-  margin: 0 auto;
-  aspect-ratio: 1/1; /* Enforce square grid */
-}
-
-/* Remove row class styling that might conflict */
-.matrix-row {
-  display: contents;
-}
-
-/* Cell styling with smaller icons */
-.matrix-cell {
-  aspect-ratio: 1/1;
-  width: 100%;
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 0; /* Hide any text */
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-/* Use pseudo-elements for the icons */
-.matrix-cell::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 55%; /* Slightly smaller icons */
-  height: 55%;
-  background-image: url('./assets/unpressed-button.png');
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.6;
-}
-
-.matrix-cell.pressed::after {
-  background-image: url('./assets/pressed-button.png');
-  opacity: 1;
-}
-
-/* Hide any button content */
-.matrix-cell > * {
-  display: none;
-}
-
-.matrix-status {
-  position: absolute;
-  bottom: 10px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  width: 80%;
-  background-color: rgba(30, 30, 30, 0.7);
-  padding: 0.75rem;
-  border-radius: 4px;
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-.valid-config {
-  color: #4caf50;
-  font-weight: bold;
-}
-
-.invalid-config {
-  color: #f44336;
-}
-
-.error-message {
-  color: #f44336;
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-/* Media queries for responsiveness */
-@media (max-width: 1100px) {
-  .main-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-  }
-  
-  .church-container,
-  .input-container {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-}
-
-@media (max-width: 600px) {
-  .app {
+/* 8. Responsive Stacking */
+@media (max-width: 900px) { 
+  .app-layout {
+    flex-direction: column; 
     padding: 1rem;
+    gap: 1rem;
+    align-items: center; /* Center columns when stacked */
   }
+  .keypad-column, .church-column {
+    flex-basis: auto; 
+    width: 100%; 
+    max-width: 500px; 
+    /* margin: 0 auto; /* Already centered by parent align-items */
+    padding: 0.5rem; /* Reduce padding */
+  }
+   .church-column {
+     order: -1; 
+     margin-bottom: 1rem; 
+   }
+   .keypad-column {
+       gap: 1rem; /* Adjust gap for stacked view */
+   }
+   .matrix-input {
+       max-width: 250px; /* Smaller keypad on mobile */
+       padding: 0.5rem;
+   }
+   .matrix-status, .go-button {
+       font-size: 0.8rem;
+       min-width: 150px;
+       padding: 0.5rem 1rem;
+   }
+}
+
+/* 9. Animation Keyframes (Keep from previous CSS) */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
 }

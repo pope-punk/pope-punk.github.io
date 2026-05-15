@@ -16,22 +16,37 @@ import unpressedButton from "./assets/unpressed-button.png"; // Bust Icon (Unpre
 import hexagonBackground from "./assets/church-background.png";
 import appBackground from "./assets/app-background.png";
 
-// === SOLUTION TRANSITION (editable) ===
-// Diegetic override: when the church is already in SOLUTION_START_STATE and the
-// keypad input SOLUTION_INPUT is applied, the system drops into maintenance mode.
-// Edit either matrix below to change the solution. 2 = pew present, 0 = empty.
-const SOLUTION_START_STATE = [
-  [0, 2, 0],
-  [0, 2, 0],
-  [0, 2, 0],
-];
-const SOLUTION_INPUT = [
-  [0, 0, 0],
-  [0, 0, 0],
-  [2, 2, 2],
+// === SOLUTION SEQUENCE (editable) ===
+// Diegetic override: when the church proceeds through these states in order,
+// the system drops into maintenance mode. Edit the matrices below to change
+// the solution. 2 = pew present, 0 = empty.
+const SOLUTION_SEQUENCE = [
+  [
+    [2, 0, 0],
+    [2, 0, 0],
+    [2, 0, 0],
+  ],
+  [
+    [2, 0, 0],
+    [0, 2, 0],
+    [0, 0, 2],
+  ],
+  [
+    [0, 0, 0],
+    [0, 0, 0],
+    [2, 2, 2],
+  ],
 ];
 
 const matricesMatch = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+// True when the most recent applied states end with the full solution sequence.
+const sequenceMatches = (history, sequence) => {
+  if (history.length < sequence.length) return false;
+  return history
+    .slice(-sequence.length)
+    .every((m, i) => matricesMatch(m, sequence[i]));
+};
 
 function App() {
   // State for the *last applied* valid matrix configuration (used by HexagonalChurch)
@@ -52,6 +67,8 @@ function App() {
   // Refs
   const canvasRef = useRef(null);
   const matrixInputRef = useRef(null); // For highlighting or potentially other methods if needed
+  // Rolling history of applied church states, seeded with the initial state
+  const stateHistoryRef = useRef([currentMatrix]);
 
   const customImages = {
     buttonIcon: buttonIcon, 
@@ -161,11 +178,12 @@ function App() {
                   // 4. Proceed with animation state updates
                   console.log("Setting state for animation...");
 
-                  // Solution transition override: if the church is in the
-                  // solution start state and the solution input is applied,
-                  // engage maintenance mode.
-                  if (matricesMatch(currentMatrix, SOLUTION_START_STATE) &&
-                      matricesMatch(selectedMatrix, SOLUTION_INPUT)) {
+                  // Record the newly applied state and engage maintenance mode
+                  // if the church has now proceeded through the solution sequence.
+                  const nextHistory = [...stateHistoryRef.current, selectedMatrix]
+                      .slice(-SOLUTION_SEQUENCE.length);
+                  stateHistoryRef.current = nextHistory;
+                  if (sequenceMatches(nextHistory, SOLUTION_SEQUENCE)) {
                       setMaintenanceMode(true);
                   }
 

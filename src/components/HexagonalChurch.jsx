@@ -766,16 +766,6 @@ const HexagonalChurch = forwardRef(({
         aria-label="Hexagonal church layout"
         role="img"
       />
-      
-      {isAnimating && (
-        <div className="animation-status">
-          <div className="step-description">
-            {animationState.isPaused
-              ? animationSteps[Math.max(0, animationState.currentStepIndex - 1)]?.description || "Initial arrangement"
-              : animationSteps[animationState.currentStepIndex]?.description || "Transforming..."}
-          </div>
-        </div>
-      )}
     </div>
   );
 });

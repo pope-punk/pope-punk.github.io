@@ -16,6 +16,23 @@ import unpressedButton from "./assets/unpressed-button.png"; // Bust Icon (Unpre
 import hexagonBackground from "./assets/church-background.png";
 import appBackground from "./assets/app-background.png";
 
+// === SOLUTION TRANSITION (editable) ===
+// Diegetic override: when the church is already in SOLUTION_START_STATE and the
+// keypad input SOLUTION_INPUT is applied, the system drops into maintenance mode.
+// Edit either matrix below to change the solution. 2 = pew present, 0 = empty.
+const SOLUTION_START_STATE = [
+  [0, 2, 0],
+  [0, 2, 0],
+  [0, 2, 0],
+];
+const SOLUTION_INPUT = [
+  [0, 0, 0],
+  [0, 0, 0],
+  [2, 2, 2],
+];
+
+const matricesMatch = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
 function App() {
   // State for the *last applied* valid matrix configuration (used by HexagonalChurch)
   const [currentMatrix, setCurrentMatrix] = useState(generateDefaultMatrix());
@@ -28,6 +45,9 @@ function App() {
   // Animation state
   const [transformationSteps, setTransformationSteps] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // Maintenance mode (engaged only by the solution transition override)
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
   
   // Refs
   const canvasRef = useRef(null);
@@ -137,13 +157,22 @@ function App() {
                        setInputError("Failed to calculate valid transition path."); 
                        setIsInputValid(false); // Mark invalid if path fails
                    }
-              } else { 
+              } else {
                   // 4. Proceed with animation state updates
                   console.log("Setting state for animation...");
-                  setTransformationSteps(steps); 
+
+                  // Solution transition override: if the church is in the
+                  // solution start state and the solution input is applied,
+                  // engage maintenance mode.
+                  if (matricesMatch(currentMatrix, SOLUTION_START_STATE) &&
+                      matricesMatch(selectedMatrix, SOLUTION_INPUT)) {
+                      setMaintenanceMode(true);
+                  }
+
+                  setTransformationSteps(steps);
                   setCurrentMatrix(selectedMatrix); // Apply the valid selection
                   setIsAnimating(true);
-                  matrixInputRef.current?.clearHighlight(); 
+                  matrixInputRef.current?.clearHighlight();
               }
           } else {
               console.log("Submitted matrix is the same as current matrix. No change needed.");
@@ -200,11 +229,14 @@ function App() {
         {/* Status Display (Uses App's state) */}
         <div className="matrix-status">
           <div>
-            {inputError ? 
-                <span className="invalid-config">{inputError}</span> :
-                (isInputValid ? 
-                    <span className="valid-config">Valid Configuration</span> :
-                    <span className="invalid-config">Input Invalid</span> // Changed message slightly
+            {maintenanceMode ?
+                <span className="maintenance-mode">MAINTENANCE MODE ENGAGED</span> :
+                (inputError ?
+                    <span className="invalid-config">{inputError}</span> :
+                    (isInputValid ?
+                        <span className="valid-config">Valid Configuration</span> :
+                        <span className="invalid-config">Input Invalid</span> // Changed message slightly
+                    )
                 )
             }
           </div>

@@ -18,6 +18,13 @@ export const CANONICAL_STATES = {
 
 export const CANONICAL_STATE = CANONICAL_STATES.DIAGONAL_1;
 
+// State the app loads with on page open. 2 = pew present, 0 = empty.
+export const DEFAULT_STATE = [
+  [0, 0, 0],
+  [2, 2, 2],
+  [0, 0, 0],
+];
+
 // --- Helper Functions ---
 const cloneMatrix = (matrix) => {
   if (!matrix || !Array.isArray(matrix)) {
@@ -492,7 +499,7 @@ export const findNearestCanonicalState = (matrix) => {
 };
 
 export const generateDefaultMatrix = () => {
-  return cloneMatrix(CANONICAL_STATE);
+  return cloneMatrix(DEFAULT_STATE);
 };
 
 // --- Path Finding Functions ---
